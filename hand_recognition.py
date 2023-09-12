@@ -21,10 +21,29 @@ def video_frame_callback(frame):
     all_gestures = []
     img = frame.to_ndarray(format="bgr24")
 
+
+
+
+
+    
+    flipped = img[::-1,:,:]
+    frame_rgb = cv2.cvtColor(flipped, cv2.COLOR_BGR2RGB)
+    result = hands.process(frame_rgb)
+    print(result)
+
+
+
+
+
+
+
+
+
+
+    
     try:
         x, y, c = img.shape
         frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        st.image(frame_rgb)
         result = hands.process(frame_rgb)
 
         if result.multi_hand_landmarks:
