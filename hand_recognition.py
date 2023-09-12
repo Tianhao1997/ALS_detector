@@ -20,30 +20,32 @@ def video_frame_callback(frame):
 
     all_gestures = []
     img = frame.to_ndarray(format="bgr24")
-    
-    x, y, c = img.shape
-    frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    result = hands.process(frame_rgb)
 
-    if result.multi_hand_landmarks:
-        for handslms in result.multi_hand_landmarks:
-            lmks = []
-            for lm in handslms.landmark:
-                lmx = int(lm.x * x)
-                lmy = int(lm.y * y)
-                lmks.extend([lmx, lmy])
+    try:
+        x, y, c = img.shape
+        frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        result = hands.process(frame_rgb)
 
-            preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
-            predicted_names = [k for k, v in gesture_names.items() if v == preds]
-            placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
+        if result.multi_hand_landmarks:
+            for handslms in result.multi_hand_landmarks:
+                lmks = []
+                for lm in handslms.landmark:
+                    lmx = int(lm.x * x)
+                    lmy = int(lm.y * y)
+                    lmks.extend([lmx, lmy])
 
-            gesture = dict(zip(handpoints, lmks))
-            all_gestures.append(gesture)
+                preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
+                predicted_names = [k for k, v in gesture_names.items() if v == preds]
+                placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
 
-            mpDraw.draw_landmarks(img, handslms, mpHands.HAND_CONNECTIONS,
-                                  mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
-                                  mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+                gesture = dict(zip(handpoints, lmks))
+                all_gestures.append(gesture)
 
+                mpDraw.draw_landmarks(img, handslms, mpHands.HAND_CONNECTIONS,
+                                      mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
+                                      mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+    except Exception as e:
+        st.error(f"Error processing video frame: {e}")
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 model_xgb = XGBClassifier()
