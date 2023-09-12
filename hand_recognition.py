@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 import numpy as np
 import av
 import cv2
-from streamlit_webrtc import webrtc_streamer
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 # initializing mediapipe
 mpHands = mp.solutions.hands    # this performs the hand recognition
 hands = mpHands.Hands(max_num_hands=2, min_detection_confidence=0.7)    # this line configures the model
@@ -42,6 +42,39 @@ gesture_names = {'A': 0,
  'X': 23,
  'Y': 24,
  'Z': 25}
+
+
+class VideoTransformer(VideoTransformerBase):
+    def transform(self, frame):
+        x, y, c = frame.shape
+
+        frame = cv2.flip(frame, 1)  # flip frame vertically
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = hands.process(frame_rgb)  # get hand landmark predictions
+
+        # post processing the result
+        if result.multi_hand_landmarks:
+            for handslms in result.multi_hand_landmarks:
+                lmks = []
+                for lm in handslms.landmark:
+                    lmx = int(lm.x * x)
+                    lmy = int(lm.y * y)
+                    lmks.extend([lmx, lmy])  # Add each x and y coordinate consecutively
+
+                preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
+                predicted_names = [k for k, v in gesture_names.items() if v == preds]
+                placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
+
+                gesture = dict(zip(handpoints, lmks))  # Convert landmarks to dictionary with labels
+                all_gestures.append(gesture)  # store the landmarks for each hand
+
+                # drawing landmarks on the frame
+                mpDraw.draw_landmarks(frame, handslms, mpHands.HAND_CONNECTIONS,
+                                      mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
+                                      mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+
+        return frame
+     
 st.set_page_config(page_title="PRACTICE: The American Sign Language (ASL) sign",
                    page_icon="🧏🏼",
                    layout="wide",)
@@ -70,45 +103,8 @@ handpoints = ['HandLandmark.WRIST_lmx', 'HandLandmark.WRIST_lmy', 'HandLandmark.
 
 all_gestures = []
 
-while True:
-    _, frame = cap.read()
-    x, y, c = frame.shape
-
-    frame = cv2.flip(frame, 1)  # flip frame vertically
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hands.process(frame_rgb)   # get hand landmark predictions
-
-    # post processing the result
-    if result.multi_hand_landmarks:
-        for handslms in result.multi_hand_landmarks:
-            lmks = []
-            for lm in handslms.landmark:
-                lmx = int(lm.x * x)
-                lmy = int(lm.y * y)
-                lmks.extend([lmx, lmy])  # Add each x and y coordinate consecutively
-
-            # print(lmks)
-            # print(len(lmks))
-            preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
-            predicted_names = [k for k, v in gesture_names.items() if v == preds]
-            placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
-
-            gesture = dict(zip(handpoints, lmks))  # Convert landmarks to dictionary with labels
-            all_gestures.append(gesture)  # store the landmarks for each hand
-
-            # drawing landmarks on the frame
-            mpDraw.draw_landmarks(frame, handslms, mpHands.HAND_CONNECTIONS,
-                                  mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
-                                  mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-
-    #cv2.imshow('Output', frame)
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    FRAME_WINDOW.image(frame)
-    if cv2.waitKey(1) == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+# Start the webcam feed and use the VideoTransformer class for processing each frame
+webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
 
 # At this point, `all_gestures` contains all the landmarks for all the frames where a hand was detected.
 #print(all_gestures)
