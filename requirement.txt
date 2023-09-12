@@ -1,3 +1,4 @@
 opencv-python
 xgboost
 numpy
+streamlit
