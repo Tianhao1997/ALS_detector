@@ -15,6 +15,10 @@ mpDraw = mp.solutions.drawing_utils  # this line draws the detected keypoints
 
 
 def video_frame_callback(frame):
+    handpoints = ['HandLandmark.WRIST_lmx', 'HandLandmark.WRIST_lmy', 'HandLandmark.THUMB_CMC_lmx', 'HandLandmark.THUMB_CMC_lmy', 'HandLandmark.THUMB_MCP_lmx', 'HandLandmark.THUMB_MCP_lmy', 'HandLandmark.THUMB_IP_lmx', 'HandLandmark.THUMB_IP_lmy', 'HandLandmark.THUMB_TIP_lmx', 'HandLandmark.THUMB_TIP_lmy', 'HandLandmark.INDEX_FINGER_MCP_lmx', 'HandLandmark.INDEX_FINGER_MCP_lmy', 'HandLandmark.INDEX_FINGER_PIP_lmx', 'HandLandmark.INDEX_FINGER_PIP_lmy', 'HandLandmark.INDEX_FINGER_DIP_lmx', 'HandLandmark.INDEX_FINGER_DIP_lmy', 'HandLandmark.INDEX_FINGER_TIP_lmx', 'HandLandmark.INDEX_FINGER_TIP_lmy', 'HandLandmark.MIDDLE_FINGER_MCP_lmx', 'HandLandmark.MIDDLE_FINGER_MCP_lmy', 'HandLandmark.MIDDLE_FINGER_PIP_lmx',
+              'HandLandmark.MIDDLE_FINGER_PIP_lmy', 'HandLandmark.MIDDLE_FINGER_DIP_lmx', 'HandLandmark.MIDDLE_FINGER_DIP_lmy', 'HandLandmark.MIDDLE_FINGER_TIP_lmx', 'HandLandmark.MIDDLE_FINGER_TIP_lmy', 'HandLandmark.RING_FINGER_MCP_lmx', 'HandLandmark.RING_FINGER_MCP_lmy', 'HandLandmark.RING_FINGER_PIP_lmx', 'HandLandmark.RING_FINGER_PIP_lmy', 'HandLandmark.RING_FINGER_DIP_lmx', 'HandLandmark.RING_FINGER_DIP_lmy', 'HandLandmark.RING_FINGER_TIP_lmx', 'HandLandmark.RING_FINGER_TIP_lmy', 'HandLandmark.PINKY_MCP_lmx', 'HandLandmark.PINKY_MCP_lmy', 'HandLandmark.PINKY_PIP_lmx', 'HandLandmark.PINKY_PIP_lmy', 'HandLandmark.PINKY_DIP_lmx', 'HandLandmark.PINKY_DIP_lmy', 'HandLandmark.PINKY_TIP_lmx', 'HandLandmark.PINKY_TIP_lmy']
+
+    all_gestures = []
     img = frame.to_ndarray(format="bgr24")
     
     x, y, c = img.shape
@@ -96,12 +100,6 @@ with right_column:
 #    key="video_in",
 #    media_stream_constraints={"video": True, "audio": False},
 #)
-
-
-handpoints = ['HandLandmark.WRIST_lmx', 'HandLandmark.WRIST_lmy', 'HandLandmark.THUMB_CMC_lmx', 'HandLandmark.THUMB_CMC_lmy', 'HandLandmark.THUMB_MCP_lmx', 'HandLandmark.THUMB_MCP_lmy', 'HandLandmark.THUMB_IP_lmx', 'HandLandmark.THUMB_IP_lmy', 'HandLandmark.THUMB_TIP_lmx', 'HandLandmark.THUMB_TIP_lmy', 'HandLandmark.INDEX_FINGER_MCP_lmx', 'HandLandmark.INDEX_FINGER_MCP_lmy', 'HandLandmark.INDEX_FINGER_PIP_lmx', 'HandLandmark.INDEX_FINGER_PIP_lmy', 'HandLandmark.INDEX_FINGER_DIP_lmx', 'HandLandmark.INDEX_FINGER_DIP_lmy', 'HandLandmark.INDEX_FINGER_TIP_lmx', 'HandLandmark.INDEX_FINGER_TIP_lmy', 'HandLandmark.MIDDLE_FINGER_MCP_lmx', 'HandLandmark.MIDDLE_FINGER_MCP_lmy', 'HandLandmark.MIDDLE_FINGER_PIP_lmx',
-              'HandLandmark.MIDDLE_FINGER_PIP_lmy', 'HandLandmark.MIDDLE_FINGER_DIP_lmx', 'HandLandmark.MIDDLE_FINGER_DIP_lmy', 'HandLandmark.MIDDLE_FINGER_TIP_lmx', 'HandLandmark.MIDDLE_FINGER_TIP_lmy', 'HandLandmark.RING_FINGER_MCP_lmx', 'HandLandmark.RING_FINGER_MCP_lmy', 'HandLandmark.RING_FINGER_PIP_lmx', 'HandLandmark.RING_FINGER_PIP_lmy', 'HandLandmark.RING_FINGER_DIP_lmx', 'HandLandmark.RING_FINGER_DIP_lmy', 'HandLandmark.RING_FINGER_TIP_lmx', 'HandLandmark.RING_FINGER_TIP_lmy', 'HandLandmark.PINKY_MCP_lmx', 'HandLandmark.PINKY_MCP_lmy', 'HandLandmark.PINKY_PIP_lmx', 'HandLandmark.PINKY_PIP_lmy', 'HandLandmark.PINKY_DIP_lmx', 'HandLandmark.PINKY_DIP_lmy', 'HandLandmark.PINKY_TIP_lmx', 'HandLandmark.PINKY_TIP_lmy']
-
-all_gestures = []
 
 
 
