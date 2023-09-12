@@ -5,5 +5,5 @@ mediapipe==0.8.7.1
 protobuf~=3.19.0
 scikit-learn
 streamlit-webrtc
-import av
+av
 
