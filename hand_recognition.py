@@ -66,7 +66,7 @@ def video_frame_callback(frame):
                                       mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
     except Exception as e:
         st.error(f"Error processing video frame: {e}")
-    return av.VideoFrame.from_ndarray(rame_rgb, format="bgr24")
+    return av.VideoFrame.from_ndarray(frame_rgb, format="bgr24")
 
 model_xgb = XGBClassifier()
 model_xgb.load_model("model.json")
