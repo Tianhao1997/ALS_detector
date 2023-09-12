@@ -12,6 +12,8 @@ from streamlit_webrtc import webrtc_streamer
 mpHands = mp.solutions.hands    # this performs the hand recognition
 hands = mpHands.Hands(max_num_hands=2, min_detection_confidence=0.7)    # this line configures the model
 mpDraw = mp.solutions.drawing_utils  # this line draws the detected keypoints
+
+
 def video_frame_callback(frame):
     img = frame.to_ndarray(format="bgr24")
     
