@@ -12,7 +12,33 @@ from streamlit_webrtc import webrtc_streamer
 mpHands = mp.solutions.hands    # this performs the hand recognition
 hands = mpHands.Hands(max_num_hands=2, min_detection_confidence=0.7)    # this line configures the model
 mpDraw = mp.solutions.drawing_utils  # this line draws the detected keypoints
+def video_frame_callback(frame):
+    img = frame.to_ndarray(format="bgr24")
+    
+    x, y, c = img.shape
+    frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    result = hands.process(frame_rgb)
 
+    if result.multi_hand_landmarks:
+        for handslms in result.multi_hand_landmarks:
+            lmks = []
+            for lm in handslms.landmark:
+                lmx = int(lm.x * x)
+                lmy = int(lm.y * y)
+                lmks.extend([lmx, lmy])
+
+            preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
+            predicted_names = [k for k, v in gesture_names.items() if v == preds]
+            placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
+
+            gesture = dict(zip(handpoints, lmks))
+            all_gestures.append(gesture)
+
+            mpDraw.draw_landmarks(img, handslms, mpHands.HAND_CONNECTIONS,
+                                  mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
+                                  mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+
+    return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 model_xgb = XGBClassifier()
 model_xgb.load_model("model.json")
@@ -56,7 +82,9 @@ st.warning("All video streaming will not be stored anywhere. Feel free to try it
 left_column, right_column = st.columns(2)
 with left_column:
     FRAME_WINDOW = st.image([])
+    webrtc_streamer(key="example", video_frame_callback=video_frame_callback, media_stream_constraints={"video": True, "audio": False},)
     placeholder = st.empty()
+ 
 with right_column:
     ASL_poster = st.image('./ASL_poster.jpg', width = 420)
 
@@ -73,32 +101,5 @@ handpoints = ['HandLandmark.WRIST_lmx', 'HandLandmark.WRIST_lmy', 'HandLandmark.
 
 all_gestures = []
 
-def video_frame_callback(frame):
-    img = frame.to_ndarray(format="bgr24")
-    
-    x, y, c = img.shape
-    frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    result = hands.process(frame_rgb)
 
-    if result.multi_hand_landmarks:
-        for handslms in result.multi_hand_landmarks:
-            lmks = []
-            for lm in handslms.landmark:
-                lmx = int(lm.x * x)
-                lmy = int(lm.y * y)
-                lmks.extend([lmx, lmy])
 
-            preds = model_xgb.predict(np.array(lmks).reshape(1, -1))
-            predicted_names = [k for k, v in gesture_names.items() if v == preds]
-            placeholder.header(f"Do you mean: :green[{str(predicted_names[0])}]?")
-
-            gesture = dict(zip(handpoints, lmks))
-            all_gestures.append(gesture)
-
-            mpDraw.draw_landmarks(img, handslms, mpHands.HAND_CONNECTIONS,
-                                  mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
-                                  mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
-
-webrtc_streamer(key="example", video_frame_callback=video_frame_callback, media_stream_constraints={"video": True, "audio": False},)
