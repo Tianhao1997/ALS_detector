@@ -99,8 +99,6 @@ def video_frame_callback(frame):
                                   mpDraw.DrawingSpec(color=(3, 252, 244), thickness=2, circle_radius=2),
                                   mpDraw.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
-    flipped = img[::-1,:,:]
-
-    return av.VideoFrame.from_ndarray(flipped, format="bgr24")
+    return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 webrtc_streamer(key="example", video_frame_callback=video_frame_callback, media_stream_constraints={"video": True, "audio": False},)
