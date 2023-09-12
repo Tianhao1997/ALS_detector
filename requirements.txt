@@ -1,5 +1,6 @@
 opencv-python-headless
 xgboost==1.7.6
-protobuf==3.20.0
 mediapipe==0.8.7.1
+protobuf==3.17.3
+
 
