@@ -1,0 +1,3 @@
+opencv-python==2.4.9
+xgboost
+numpy
