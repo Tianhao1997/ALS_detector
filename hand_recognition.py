@@ -5,7 +5,9 @@ import streamlit as st
 import mediapipe as mp
 from xgboost import XGBClassifier
 import numpy as np
+import av
 import cv2
+from streamlit_webrtc import webrtc_streamer
 # initializing mediapipe
 mpHands = mp.solutions.hands    # this performs the hand recognition
 hands = mpHands.Hands(max_num_hands=2, min_detection_confidence=0.7)    # this line configures the model
