@@ -51,7 +51,7 @@ st.success("American Sign Language (ASL) is a natural language that serves as "
          "organized visual language that is expressed by employing both manual "
          "and nonmanual features.")
 st.warning("All video streaming will not be stored anywhere. Feel free to try it out. ")
-left_column, right_column = st.columns(2, gap="medium")
+left_column, right_column = st.columns(2)
 with left_column:
     FRAME_WINDOW = st.image([])
     placeholder = st.empty()
