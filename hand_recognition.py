@@ -24,6 +24,7 @@ def video_frame_callback(frame):
     try:
         x, y, c = img.shape
         frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        st.image(frame_rgb)
         result = hands.process(frame_rgb)
 
         if result.multi_hand_landmarks:
