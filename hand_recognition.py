@@ -90,7 +90,7 @@ st.warning("All video streaming will not be stored anywhere. Feel free to try it
 left_column, right_column = st.columns(2)
 with left_column:
     FRAME_WINDOW = st.image([])
-    webrtc_streamer(key="example", video_frame_callback=video_frame_callback, media_stream_constraints={"video": True, "audio": False},)
+    webrtc_streamer(key="example", video_frame_callback=video_frame_callback, media_stream_constraints={"video": True, "audio": False}, async_processing=True,)
     placeholder = st.empty()
  
 with right_column:
