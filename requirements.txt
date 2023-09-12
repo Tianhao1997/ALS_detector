@@ -1,5 +1,3 @@
-opencv-python
-xgboost
-numpy
-streamlit
-mediapipe
+opencv-python==4.8.0.76
+xgboost==1.7.6
+mediapipe==0.9.1.0
